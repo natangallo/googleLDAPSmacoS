@@ -1,0 +1,2 @@
+# googleLDAPSmacoS
+ Deployment for MDM
