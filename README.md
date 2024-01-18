@@ -1,5 +1,5 @@
 # Google LDAPs Project for macOS
-
+This package is intended to be used in an MDM ;-D
 ## File Structure
 The PKG must be constructed with the following file/folder structure:
 usr
