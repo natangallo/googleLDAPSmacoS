@@ -3,26 +3,38 @@
 # Script default path
 pathDir="/usr/local/GooogleLDAPS"
 
+# Log Settings
+filename="gldapsinstall"
+now=$(date +'%m-%d-%Y-%T')
+dateSub=$(echo "$now" | sed 's/-//g' | sed 's/://g')
+logFile="$pathDir""/$filename""_""$dateSub.log"
+if [ ! -e "$logFile" ]; then
+	touch "$logFile"
+fi
+
 ############################################################################################################
-# Before Deploying this Script, please check that the Google Certificate has been installed on the client  #
-# If not created, Create a Mac Profile with the P12 certificate.                                           #
-# To convert the certificate and key files in P12, execute the following example command                   #
-# openssl pkcs12 -export -out ldap-client.p12 -in ldap-client.crt -inkey ldap-client.key                   #
+# Before Deploying this Script, please check that the Google Certificate has been installed on the client
+# If not created, Create a Mac Profile with the P12 certificate.
+# To convert the certificate and key files in P12, execute the following example command
+# openssl pkcs12 -export -out ldap-client.p12 -in ldap-client.crt -inkey ldap-client.key
 ############################################################################################################
 
 #######################
 #    Do all checks    #
 #######################
+echo "############ SCRIPT STARTED #############" >> $logFile
+echo "$now Starting the PostInstall Script and doing all Pre-Cheks" >> $logFile
 
 # Create the Directory config file (plist) xml 
 #checks if the ldap.google.com.plist file exists and if not, it creates one
-plistPath="/Library/Preferences/OpenDirectory/Configurations/LDAPv3"
-
-if [ -e "$plistPath/ldap.google.com.plist" ];then
-	echo "File Still exists. The process will move on."
+plistPath="$pathDir/ldap.google.com.plist"
+if [ -e "$plistPath" ];then
+	echo "$now ldap Plist File Still exists. The process will move on." >> $logFile
+	sudo plutil -convert xml1 $plistPath
 else
-	mkdir $plistPath
-	tee > $pathDir/ldap.google.com.plist << EOF
+	echo "$now Plist File does not exists. Creating one"  >> $logFile
+	mkdir $pathDir
+	tee > $plistPath << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -645,9 +657,10 @@ fi
 # Checks if the Python Script exists
 pythonPath="$pathDir/Ldap_pythong_config.py"
 if [ -e "$pythonPath" ];then
-	echo "File Still exists. The process will move on."
+	echo "$now Python Script File Still exists. The process will move on." >> $logFile
 else
 	# Create a python script to automate the configuration on your end-user devices
+	echo "$now Python Script does not exist. Creating one." >> $logFile
 	tee > $pythonPath << EOF
 #!/usr/bin/python
 from OpenDirectory import ODNode, ODSession, kODNodeTypeConfigure
@@ -680,9 +693,12 @@ fi
 # Checks if Python3 Is installed on the system
 pythonBin="/usr/local/bin/managed_python3"
 if [ -e "$pythonBin" ];then
-	echo "File Still exists. The process will move on."
+	echo "Python Still Installed. The process will move on."
 	sudo python3 -m pip install pyobjc-framework-opendirectory
 else
+	echo "$now Python not installed. Exiting the Script." >> $logFile
+	echo "############ SCRIPT ENDED #############"
+	echo ""
 	osascript << EOF
 tell application "System Events" to display dialog "Python not Installed." with title "Avviso" buttons {"OK"} default button 1 with icon POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns"
 EOF
@@ -697,18 +713,23 @@ fi
 xcode-select --install > /dev/null 2>&1
 if [ 0 == $? ]; then
     # sleep 1
-    osascript <<EOD
+    echo "$now Command Line Developer Tools is not Installed. Proceeding with System Event Notification." >> $logFile
+    osascript <<EOF
 tell application "System Events"
     tell process "Install Command Line Developer Tools"
         keystroke return
         click button "Agree" of window "License Agreement"
     end tell
 end tell
-EOD
+EOF
 else
     echo "Command Line Developer Tools are already installed!"
+    echo "$now Proceeding with the LDAP configuration Install" >> $logFile
 	# Runs the ldap configuration
 	sudo python3 $pythonPath $plistPath
+	echo "$now Python Script Executed. Now Rebooting." >> $logFile
+	echo "############ SCRIPT ENDED #############" >> $logFile
+	echo "" >> $logFile
 	sudo shutdown -r +1
 	osascript << EOF
 tell application "System Events" to display dialog "La configurazione per LDAPs di Google è stata installata. Il computer si riavvierà entro 1 minuto." with title "Avviso" buttons {"OK"} default button 1 with icon POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns"

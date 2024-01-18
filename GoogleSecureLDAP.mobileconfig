@@ -10,76 +10,12 @@
 			<key>KeyIsExtractable</key>
 			<false/>
 			<key>Password</key>
-			<string>P4ssword!</string>
+			<string>##### CUSTOMIZE YOUR PASSWORD ######</string>
 			<key>PayloadCertificateFileName</key>
 			<string>Google_2027_01_10_38616</string>
 			<key>PayloadContent</key>
 			<data>
-			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
-			/QICCAA=
+			###### INSERT HERE THE CERTIFICATE ######
 			</data>
 			<key>PayloadDisplayName</key>
 			<string>Certificate</string>
@@ -96,9 +32,9 @@
 	<key>PayloadDisplayName</key>
 	<string>GoogleSecureLDAP</string>
 	<key>PayloadIdentifier</key>
-	<string>MacBook-Pro-di-Natanaele-Gallo.AF04A652-7230-49CA-96BC-4E2B4F36E605</string>
+	<string>AF04A652-7230-49CA-96BC-4E2B4F36E605</string>
 	<key>PayloadOrganization</key>
-	<string>ITIS A. Volta</string>
+	<string>##### CUSTOMIZE YOUR ORG ######</string>
 	<key>PayloadScope</key>
 	<string>System</string>
 	<key>PayloadType</key>
