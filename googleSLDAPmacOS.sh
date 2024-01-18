@@ -1,5 +1,15 @@
 #!/bin/sh
 
+############################################################################################################
+# Use this script at your own risk.
+# This script can be used as a postinstall script in a pkg created using your preferred software
+# 
+# Before Deploying this Script, please check that the Google Certificate has been installed on the client
+# If not created, Create a Mac Profile with the P12 certificate. (look at the Google KB site)
+# To convert the certificate and key files in P12, execute the following example command
+# openssl pkcs12 -export -out ldap-client.p12 -in ldap-client.crt -inkey ldap-client.key
+############################################################################################################
+
 # Script default path
 pathDir="/usr/local/GooogleLDAPS"
 
@@ -11,13 +21,6 @@ logFile="$pathDir""/$filename""_""$dateSub.log"
 if [ ! -e "$logFile" ]; then
 	touch "$logFile"
 fi
-
-############################################################################################################
-# Before Deploying this Script, please check that the Google Certificate has been installed on the client
-# If not created, Create a Mac Profile with the P12 certificate.
-# To convert the certificate and key files in P12, execute the following example command
-# openssl pkcs12 -export -out ldap-client.p12 -in ldap-client.crt -inkey ldap-client.key
-############################################################################################################
 
 #######################
 #    Do all checks    #
